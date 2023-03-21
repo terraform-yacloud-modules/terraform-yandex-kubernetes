@@ -1,0 +1,123 @@
+resource "tls_private_key" "default_ssh_key" {
+  count = var.generate_default_ssh_key ? 1 : 0
+
+  algorithm = "RSA"
+}
+
+resource "yandex_kubernetes_node_group" "node_groups" {
+  for_each = var.node_groups
+
+  cluster_id  = yandex_kubernetes_cluster.main.id
+  name        = each.key
+  description = each.value["description"]
+  labels      = lookup(each.value, "labels", var.labels)
+
+  version = lookup(each.value, "version", var.master_version)
+
+  instance_template {
+    platform_id = each.value["platform_id"]
+    metadata    = merge(local.node_groups_ssh_keys_metadata, each.value["metadata"])
+
+    resources {
+      memory        = each.value["memory"]
+      cores         = each.value["cores"]
+      core_fraction = each.value["core_fraction"]
+      gpus          = each.value["gpus"]
+    }
+
+    boot_disk {
+      type = each.value["boot_disk_type"]
+      size = each.value["boot_disk_size"]
+    }
+
+    scheduling_policy {
+      preemptible = each.value["preemptible"]
+    }
+
+    dynamic "placement_policy" {
+      for_each = compact([each.value["placement_group_id"]])
+
+      content {
+        placement_group_id = placement_policy.value
+      }
+    }
+
+    network_interface {
+      subnet_ids         = [for location in lookup(var.node_groups_locations, each.key, local.node_groups_default_locations) : location.subnet_id]
+      ipv4               = true
+      ipv6               = false
+      nat                = each.value["nat"]
+      security_group_ids = each.value["security_group_ids"]
+      # TODO: ipv4_dns_records
+      # TODO: ipv6_dns_records
+    }
+
+    network_acceleration_type = each.value["network_acceleration_type"]
+
+    dynamic "container_runtime" {
+      for_each = compact([each.value["container_runtime_type"]])
+
+      content {
+        type = container_runtime.value
+      }
+    }
+  }
+
+  scale_policy {
+    dynamic "fixed_scale" {
+      for_each = each.value["fixed_scale"] != null && each.value["auto_scale"] == null ? [1] : []
+
+      content {
+        size = each.value["fixed_scale"]["size"]
+      }
+    }
+
+    dynamic "auto_scale" {
+      for_each = each.value["fixed_scale"] == null && each.value["auto_scale"] != null ? [1] : []
+
+      content {
+        min     = each.value["auto_scale"]["min"]
+        max     = each.value["auto_scale"]["max"]
+        initial = each.value["auto_scale"]["initial"]
+      }
+    }
+  }
+
+  allocation_policy {
+    dynamic "location" {
+      for_each = lookup(var.node_groups_locations, each.key, local.node_groups_default_locations)
+
+      content {
+        zone = location.value.zone
+      }
+    }
+  }
+
+  maintenance_policy {
+    auto_repair  = each.value["auto_repair"]
+    auto_upgrade = each.value["auto_upgrade"]
+
+    dynamic "maintenance_window" {
+      for_each = each.value["maintenance_windows"]
+
+      content {
+        day        = lookup(maintenance_window.value, "day", null)
+        start_time = maintenance_window.value["start_time"]
+        duration   = maintenance_window.value["duration"]
+      }
+    }
+  }
+
+  node_labels            = each.value["node_labels"]
+  node_taints            = each.value["node_taints"]
+  allowed_unsafe_sysctls = each.value["allowed_unsafe_sysctls"]
+
+  dynamic "deploy_policy" {
+    for_each = each.value["max_expansion"] != null || each.value["max_unavailable"] != null ? [1] : []
+
+    content {
+      max_expansion   = each.value["max_expansion"]
+      max_unavailable = each.value["max_unavailable"]
+    }
+  }
+}
