@@ -278,7 +278,7 @@ variable "node_groups_locations" {
   default = null
 }
 
-variable "node_groups_default_security_groups_id" {
+variable "node_groups_default_security_groups_ids" {
   description = "A list of default IDs for node groups. Will be used if node_groups[<group>].security_group_ids is empty"
   type        = list(string)
   default     = []
