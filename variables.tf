@@ -160,8 +160,8 @@ variable "master_locations" {
   location, will be created zonal cluster, if more than one -- regional
   EOF
   type = list(object({
-    zone      = string
     subnet_id = string
+    zone      = string
   }))
 }
 
@@ -269,9 +269,8 @@ variable "node_groups_ssh_keys" {
   default     = {}
 }
 
-
-variable "node_groups_default_locations" {
-  description = "Default locations of K8S node groups. If omitted, master_locations will be used"
+variable "node_groups_locations" {
+  description = "Locations of K8S node groups. If omitted, master_locations will be used"
   type = list(object({
     subnet_id = string
     zone      = string
@@ -279,11 +278,8 @@ variable "node_groups_default_locations" {
   default = null
 }
 
-variable "node_groups_locations" {
-  description = "Locations of K8S node groups. Use it to override default locations of certain node groups"
-  type = map(list(object({
-    subnet_id = string
-    zone      = string
-  })))
-  default = {}
+variable "node_groups_default_security_groups_id" {
+  description = "A list of default IDs for node groups. Will be used if node_groups[<group>].security_group_ids is empty"
+  type        = list(string)
+  default     = []
 }

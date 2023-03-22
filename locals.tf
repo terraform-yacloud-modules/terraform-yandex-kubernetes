@@ -22,5 +22,5 @@ locals {
     ))
   } : {}
 
-  node_groups_default_locations = coalesce(var.node_groups_default_locations, var.master_locations)
+  node_groups_locations = var.node_groups_locations != null ? var.node_groups_locations : var.master_locations
 }

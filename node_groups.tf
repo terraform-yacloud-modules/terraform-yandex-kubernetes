@@ -43,11 +43,11 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     }
 
     network_interface {
-      subnet_ids         = [for location in lookup(var.node_groups_locations, each.key, local.node_groups_default_locations) : location.subnet_id]
+      subnet_ids         = [for location in local.node_groups_locations : location.subnet_id]
       ipv4               = true
       ipv6               = false
       nat                = each.value["nat"]
-      security_group_ids = each.value["security_group_ids"]
+      security_group_ids = each.value["security_group_ids"] != [] ? each.value["security_group_ids"] : var.node_groups_default_security_groups_id
       # TODO: ipv4_dns_records
       # TODO: ipv6_dns_records
     }
@@ -85,7 +85,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
 
   allocation_policy {
     dynamic "location" {
-      for_each = lookup(var.node_groups_locations, each.key, local.node_groups_default_locations)
+      for_each = var.node_groups_locations
 
       content {
         zone = location.value.zone
