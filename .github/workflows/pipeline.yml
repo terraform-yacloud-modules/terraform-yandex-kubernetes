@@ -55,7 +55,7 @@ jobs:
       -
         name: Test code with TFSec
         continue-on-error: true
-        uses: aquasecurity/tfsec-action@v1.0.2
+        uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: true
       -
