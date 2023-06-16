@@ -8,7 +8,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
   for_each = var.node_groups
 
   cluster_id = yandex_kubernetes_cluster.main.id
-  name       = var.node_name_prefix != "" ? format("%s-%s", var, node_name_prefix, each.key) : each.key
+  name       = var.node_name_prefix != "" ? format("%s-%s", var.node_name_prefix, each.key) : each.key
 
   description = each.value["description"]
   labels      = lookup(each.value, "labels", var.labels)
