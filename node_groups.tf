@@ -47,7 +47,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
       ipv4               = true
       ipv6               = false
       nat                = each.value["nat"]
-      security_group_ids = each.value["security_group_ids"] != [] ? each.value["security_group_ids"] : var.node_groups_default_security_groups_ids
+      security_group_ids = each.value["security_group_ids"] != null ? each.value["security_group_ids"] : var.node_groups_default_security_groups_ids
       # TODO: ipv4_dns_records
       # TODO: ipv6_dns_records
     }
