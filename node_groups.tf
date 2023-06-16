@@ -43,7 +43,6 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     }
 
     network_interface {
-      # TODO
       subnet_ids         = [for location in [local.node_groups_locations[0]] : location.subnet_id]
       ipv4               = true
       ipv6               = false
