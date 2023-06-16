@@ -232,7 +232,7 @@ variable "node_groups" {
     preemptible               = optional(bool, false)
     placement_group_id        = optional(string, null)
     nat                       = optional(bool, false)
-    security_group_ids        = optional(list(string), null)
+    security_group_ids        = optional(list(string))
     network_acceleration_type = optional(string, null)
     container_runtime_type    = optional(string, "containerd")
     fixed_scale               = optional(map(string), null)
