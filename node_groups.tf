@@ -98,7 +98,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     auto_upgrade = each.value["auto_upgrade"]
 
     dynamic "maintenance_window" {
-      for_each = each.value["maintenance_windows"]
+      for_each = lookup(each.value["maintenance_windows"], null) != null ? each.value["maintenance_windows"]: []
 
       content {
         day        = lookup(maintenance_window.value, "day", null)

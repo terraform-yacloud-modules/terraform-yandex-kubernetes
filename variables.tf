@@ -239,7 +239,7 @@ variable "node_groups" {
     auto_scale                = optional(map(string), null)
     auto_repair               = optional(bool, true)
     auto_upgrade              = optional(bool, true)
-    maintenance_windows       = optional(list(any), [])
+    maintenance_windows       = optional(list(any))
     node_labels               = optional(map(string), null)
     node_taints               = optional(list(string), null)
     allowed_unsafe_sysctls    = optional(list(string), [])
