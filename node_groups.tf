@@ -7,8 +7,9 @@ resource "tls_private_key" "default_ssh_key" {
 resource "yandex_kubernetes_node_group" "node_groups" {
   for_each = var.node_groups
 
-  cluster_id  = yandex_kubernetes_cluster.main.id
-  name        = each.key
+  cluster_id = yandex_kubernetes_cluster.main.id
+  name       = var.node_name_prefix != "" ? format("%s-%s", var, node_name_prefix, each.key) : each.key
+
   description = each.value["description"]
   labels      = lookup(each.value, "labels", var.labels)
 
@@ -98,7 +99,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     auto_upgrade = each.value["auto_upgrade"]
 
     dynamic "maintenance_window" {
-      for_each = lookup(each.value, "maintenance_windows", null) != null ? each.value["maintenance_windows"]: []
+      for_each = lookup(each.value, "maintenance_windows", null) != null ? each.value["maintenance_windows"] : []
 
       content {
         day        = lookup(maintenance_window.value, "day", null)

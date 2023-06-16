@@ -215,6 +215,11 @@ variable "master_logging" {
 #
 # Cluster node groups
 #
+variable "node_name_prefix" {
+  description = "The prefix for node group name"
+  type        = string
+  default     = ""
+}
 variable "node_groups" {
   description = "K8S node groups"
   type = map(object({
