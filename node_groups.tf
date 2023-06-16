@@ -43,7 +43,8 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     }
 
     network_interface {
-      subnet_ids         = [for location in local.node_groups_locations : location.subnet_id]
+      # TODO
+      subnet_ids         = [for location in [local.node_groups_locations[0]] : location.subnet_id]
       ipv4               = true
       ipv6               = false
       nat                = each.value["nat"]
@@ -85,7 +86,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
 
   allocation_policy {
     dynamic "location" {
-      for_each = var.node_groups_locations
+      for_each = [var.node_groups_locations[0]]
 
       content {
         zone = location.value.zone
