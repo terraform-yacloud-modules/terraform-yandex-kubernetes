@@ -86,7 +86,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
 
   allocation_policy {
     dynamic "location" {
-      for_each = [var.node_groups_locations[0]]
+      for_each = [local.node_groups_locations[0]]
 
       content {
         zone = location.value.zone
