@@ -44,7 +44,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_ipv4_range"></a> [cluster\_ipv4\_range](#input\_cluster\_ipv4\_range) | CIDR block. IP range for allocating pod addresses. It should not overlap with<br>any subnet in the network the K8S cluster located in. Static routes will<br>be set up for this CIDR blocks in node subnets | `string` | `null` | no |
 | <a name="input_cluster_ipv6_range"></a> [cluster\_ipv6\_range](#input\_cluster\_ipv6\_range) | Identical to cluster\_ipv4\_range but for IPv6 protocol | `string` | `null` | no |
-| <a name="input_cni_type"></a> [cni\_type](#input\_cni\_type) | Type of K8S CNI which will be used for the cluster | `string` | `"cillium"` | no |
+| <a name="input_cni_type"></a> [cni\_type](#input\_cni\_type) | Type of K8S CNI which will be used for the cluster | `string` | `"calico"` | no |
 | <a name="input_description"></a> [description](#input\_description) | K8S cluster description | `string` | `""` | no |
 | <a name="input_folder_id"></a> [folder\_id](#input\_folder\_id) | Folder ID | `string` | `null` | no |
 | <a name="input_generate_default_ssh_key"></a> [generate\_default\_ssh\_key](#input\_generate\_default\_ssh\_key) | If true, SSH key for node groups will be generated | `bool` | `true` | no |

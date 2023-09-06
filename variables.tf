@@ -80,7 +80,7 @@ variable "service_ipv6_range" {
 variable "cni_type" {
   description = "Type of K8S CNI which will be used for the cluster"
   type        = string
-  default     = "cillium"
+  default     = "calico"
 }
 
 #

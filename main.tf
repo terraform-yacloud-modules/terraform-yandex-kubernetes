@@ -22,7 +22,7 @@ resource "yandex_kubernetes_cluster" "main" {
   service_ipv6_range       = var.service_ipv6_range
 
   dynamic "network_implementation" {
-    for_each = var.cni_type == "cillium" ? [1] : []
+    for_each = var.cni_type == "cilium" ? [1] : []
     content {
       cilium {}
     }
