@@ -30,5 +30,5 @@ output "default_ssh_key_pub" {
 
 output "default_ssh_key_prv" {
   description = "Default node groups that is attached to all node groups"
-  value       = var.generate_default_ssh_key ? tls_private_key.default_ssh_key[0].public_key_openssh : null
+  value       = var.generate_default_ssh_key ? tls_private_key.default_ssh_key[0].private_key_openssh : null
 }
