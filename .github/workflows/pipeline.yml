@@ -22,7 +22,7 @@ jobs:
     steps:
       -
         name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       -
@@ -80,14 +80,14 @@ jobs:
     steps:
       -
         name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'pull_request'
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
       -
         name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'push'
         with:
           fetch-depth: 0
