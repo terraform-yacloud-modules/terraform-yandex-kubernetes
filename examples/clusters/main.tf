@@ -10,6 +10,7 @@ module "iam_accounts" {
 
   folder_roles = each.value["folder_roles"]
   cloud_roles  = each.value["cloud_roles"]
+  folder_id    = "xxx"
 
   enable_static_access_key = each.value["enable_static_access_key"]
   enable_api_key           = each.value["enable_api_key"]
@@ -22,6 +23,7 @@ module "network" {
 
   blank_name = "test-network"
   labels     = {}
+  folder_id  = "xxx"
 
   azs = var.azs
 
