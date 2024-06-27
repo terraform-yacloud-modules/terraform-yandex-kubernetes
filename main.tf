@@ -1,5 +1,6 @@
 resource "yandex_logging_group" "main" {
-  count = var.master_logging["create_log_group"] ? 1 : 0
+  folder_id = var.folder_id == null ? data.yandex_client_config.client.folder_id : var.folder_id
+  count     = var.master_logging["create_log_group"] ? 1 : 0
 
   name   = var.name
   labels = var.labels
