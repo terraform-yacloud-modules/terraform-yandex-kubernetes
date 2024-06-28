@@ -130,7 +130,7 @@ variable "kms_provider_key_id" {
 variable "master_version" {
   description = "Version of K8S that will be used for master"
   type        = string
-  default     = "1.23"
+  default     = "1.26"
 }
 
 variable "master_public_ip" {
