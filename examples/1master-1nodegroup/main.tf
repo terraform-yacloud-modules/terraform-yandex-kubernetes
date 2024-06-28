@@ -4,7 +4,14 @@ module "iam_accounts" {
   name      = "iam"
   folder_id = "xxxx"
   folder_roles = [
-    "admin",
+    "container-registry.images.puller",
+    "k8s.clusters.agent",
+    "k8s.tunnelClusters.agent",
+    "load-balancer.admin",
+    "logging.writer",
+    "vpc.privateAdmin",
+    "vpc.publicAdmin",
+    "vpc.user",
   ]
   cloud_roles              = []
   enable_static_access_key = false
@@ -41,5 +48,7 @@ module "kube" {
       }
     }
   }
+
+  depends_on = [ module.iam_accounts ]
 
 }
