@@ -16,28 +16,30 @@ module "iam_accounts" {
 module "kube" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes.git"
 
-  network_id = "xxx"
-  folder_id  = "xxx"
+  network_id = "xxxx"
+  folder_id  = "xxxx"
 
   name = "k8s-test"
 
   service_account_id      = module.iam_accounts.id
   node_service_account_id = module.iam_accounts.id
 
-  master_region = "ru-central1"
   master_locations = [
     {
       zone      = "ru-central1-a"
-      subnet_id = "xxx"
-    },
-    {
-      zone      = "ru-central1-b"
-      subnet_id = "xxx"
-    },
-    {
-      zone      = "ru-central1-d"
-      subnet_id = "xxx"
+      subnet_id = "xxxx"
     }
   ]
+
+  node_groups = {
+    "default" = {
+      nat    = true
+      cores  = 2
+      memory = 8
+      fixed_scale = {
+        size = 3
+      }
+    }
+  }
 
 }
