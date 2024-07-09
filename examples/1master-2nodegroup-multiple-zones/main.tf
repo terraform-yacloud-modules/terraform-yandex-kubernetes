@@ -31,9 +31,15 @@ module "kube" {
   service_account_id      = module.iam_accounts.id
   node_service_account_id = module.iam_accounts.id
 
+  master_region = "ru-central1"
+
   master_locations = [
     {
       zone      = "ru-central1-a"
+      subnet_id = "xxxx"
+    },
+    {
+      zone      = "ru-central1-b"
       subnet_id = "xxxx"
     },
     {
@@ -50,8 +56,8 @@ module "kube" {
       fixed_scale = {
         size = 1
       }
-
-      zones = ["ru-central1-c", "ru-central1-d"]
+      zones      = ["ru-central1-a", "ru-central1-d"]
+      subnet_ids = ["xxxx", "xxxx"] # Укажите соответствующие подсети
     }
 
     "auto-scale-1" = {
@@ -74,7 +80,6 @@ module "kube" {
         max     = 5
         initial = 1
       }
-
       zones = ["ru-central1-d"]
     }
   }
