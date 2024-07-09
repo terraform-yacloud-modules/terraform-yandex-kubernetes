@@ -44,7 +44,24 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     }
 
     network_interface {
-      subnet_ids         = [for location in [local.node_groups_locations[0]] : location.subnet_id]
+      #
+      # The logic is the following:
+      #   if "node_groups" object contains "zones" key, take all "subnet_ids"
+      #   variables in a list format based on "zones" from "node_groups_locations" variable.
+      #
+      #   otherwise, take the first one list of objects from "node_groups_locations"
+      #
+      subnet_ids = each.value["zones"] != null ? [
+        for zone in each.value["zones"] : lookup(
+          { for item in local.node_groups_locations : item.zone => item.subnet_id },
+          zone,
+          null
+        )
+        if lookup({ for item in local.node_groups_locations : item.zone => item.subnet_id }, zone, null) != null
+      ] : [
+        for location in [local.node_groups_locations[0]] : location.subnet_id
+      ]
+
       ipv4               = true
       ipv6               = false
       nat                = each.value["nat"]
@@ -86,10 +103,12 @@ resource "yandex_kubernetes_node_group" "node_groups" {
 
   allocation_policy {
     dynamic "location" {
-      for_each = [local.node_groups_locations[0]]
+      for_each = each.value["zones"] != null ? each.value["zones"] : [
+        for location in [local.node_groups_locations[0]] : location.zone
+      ]
 
       content {
-        zone = location.value.zone
+        zone = location.value
       }
     }
   }

@@ -250,6 +250,7 @@ variable "node_groups" {
     allowed_unsafe_sysctls    = optional(list(string), [])
     max_expansion             = optional(string, null)
     max_unavailable           = optional(string, null)
+    zones                     = optional(list(string), null)
   }))
   default = {}
 }
