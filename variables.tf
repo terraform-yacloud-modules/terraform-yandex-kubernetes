@@ -203,6 +203,7 @@ variable "master_logging" {
     create_log_group           = optional(bool, true)
     log_group_retention_period = optional(string, "168h")
     log_group_id               = optional(string, "")
+    audit_enabled              = optional(bool, true)
     kube_apiserver_enabled     = optional(bool, true)
     cluster_autoscaler_enabled = optional(bool, true)
     events_enabled             = optional(bool, true)
