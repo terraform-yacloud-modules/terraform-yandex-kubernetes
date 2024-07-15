@@ -90,10 +90,11 @@ resource "yandex_kubernetes_cluster" "main" {
 
     master_logging {
       enabled                    = var.master_logging["enabled"]
-      log_group_id               = var.master_logging["log_group_id"] != "" ? var.master_logging["log_group_id"] : yandex_logging_group.main[0].id
-      kube_apiserver_enabled     = var.master_logging["kube_apiserver_enabled"]
-      cluster_autoscaler_enabled = var.master_logging["cluster_autoscaler_enabled"]
-      events_enabled             = var.master_logging["events_enabled"]
+      log_group_id               = var.master_logging["log_group_id"] != "" ? var.master_logging["log_group_id"] : (var.master_logging["create_log_group"] ? yandex_logging_group.main[0].id : null)
+      audit_enabled              = var.master_logging["enabled"] ? var.master_logging["audit_enabled"] : null
+      kube_apiserver_enabled     = var.master_logging["enabled"] ? var.master_logging["kube_apiserver_enabled"] : null
+      cluster_autoscaler_enabled = var.master_logging["enabled"] ? var.master_logging["cluster_autoscaler_enabled"] : null
+      events_enabled             = var.master_logging["enabled"] ? var.master_logging["events_enabled"] : null
     }
   }
 }
