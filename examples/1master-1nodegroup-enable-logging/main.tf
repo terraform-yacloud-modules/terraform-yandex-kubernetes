@@ -39,8 +39,7 @@ module "kube" {
   ]
 
   master_logging = {
-    enabled          = false
-    create_log_group = false
+    enabled          = true
   }
 
   node_groups = {
