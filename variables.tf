@@ -209,7 +209,7 @@ variable "master_logging" {
     events_enabled             = optional(bool, true)
   })
   default = {
-    enabled = true
+    enabled = false
   }
 }
 
