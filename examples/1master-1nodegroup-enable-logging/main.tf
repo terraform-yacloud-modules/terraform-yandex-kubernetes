@@ -2,7 +2,6 @@ module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account"
 
   name      = "iam"
-  folder_id = "xxxxx"
   folder_roles = [
     "container-registry.images.puller",
     "k8s.clusters.agent",
@@ -24,7 +23,6 @@ module "kube" {
   source = "../../"
 
   network_id = "xxxxx"
-  folder_id  = "xxxxx"
 
   name = "k8s-test"
 
@@ -34,7 +32,7 @@ module "kube" {
   master_locations = [
     {
       zone      = "ru-central1-a"
-      subnet_id = "xxxxx"
+      subnet_id = "xxxx"
     }
   ]
 

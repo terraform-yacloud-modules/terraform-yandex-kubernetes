@@ -2,7 +2,6 @@ module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account"
 
   name      = "iam"
-  folder_id = "xxxx"
   folder_roles = [
     "container-registry.images.puller",
     "k8s.clusters.agent",
@@ -24,7 +23,6 @@ module "kube" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes.git"
 
   network_id = "xxxx"
-  folder_id  = "xxxx"
 
   name = "k8s-test"
 
