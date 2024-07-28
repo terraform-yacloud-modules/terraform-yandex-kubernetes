@@ -1,11 +1,6 @@
 #
 # yandex cloud coordinates
 #
-variable "folder_id" {
-  description = "Folder ID"
-  type        = string
-  default     = null
-}
 
 #
 # naming

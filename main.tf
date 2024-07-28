@@ -1,5 +1,5 @@
 resource "yandex_logging_group" "main" {
-  folder_id = var.folder_id == null ? data.yandex_client_config.client.folder_id : var.folder_id
+  folder_id = data.yandex_client_config.client.folder_id
   count     = var.master_logging["create_log_group"] ? 1 : 0
 
   name   = var.name
@@ -9,7 +9,7 @@ resource "yandex_logging_group" "main" {
 }
 
 resource "yandex_kubernetes_cluster" "main" {
-  folder_id = var.folder_id == null ? data.yandex_client_config.client.folder_id : var.folder_id
+  folder_id = data.yandex_client_config.client.folder_id
 
   name        = var.name
   description = var.description

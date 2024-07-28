@@ -3,14 +3,12 @@ module "iam_accounts" {
   for k, v in var.iam : k => v if v["enabled"]
   }
 
-  source  = "terraform-yacloud-modules/iam/yandex//modules/iam-account"
-  version = "0.2.0"
+  source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account"
 
   name = each.key
 
   folder_roles = each.value["folder_roles"]
   cloud_roles  = each.value["cloud_roles"]
-  folder_id    = "xxx"
 
   enable_static_access_key = each.value["enable_static_access_key"]
   enable_api_key           = each.value["enable_api_key"]
@@ -18,12 +16,10 @@ module "iam_accounts" {
 }
 
 module "network" {
-  source  = "terraform-yacloud-modules/vpc/yandex"
-  version = "0.2.0"
+  source  = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-vpc.git"
 
   blank_name = "test-network"
   labels     = {}
-  folder_id  = "xxx"
 
   azs = var.azs
 

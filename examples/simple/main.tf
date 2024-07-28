@@ -2,11 +2,15 @@ module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account"
 
   name      = "test-iam"
-  folder_id = "xxxx"
   folder_roles = [
-    "editor",
     "container-registry.images.puller",
-    "k8s.tunnelClusters.agent"
+    "k8s.clusters.agent",
+    "k8s.tunnelClusters.agent",
+    "load-balancer.admin",
+    "logging.writer",
+    "vpc.privateAdmin",
+    "vpc.publicAdmin",
+    "vpc.user",
   ]
   cloud_roles              = []
   enable_static_access_key = false
@@ -19,7 +23,6 @@ module "kube" {
   source = "../../"
 
   network_id = "xxxx"
-  folder_id  = "xxxx"
 
   name = "test-kubernetes"
 
@@ -33,4 +36,7 @@ module "kube" {
     }
   ]
 
+  depends_on = [
+    module.iam_accounts
+  ]
 }
