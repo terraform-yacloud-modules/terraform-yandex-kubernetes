@@ -58,7 +58,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
           null
         )
         if lookup({ for item in local.node_groups_locations : item.zone => item.subnet_id }, zone, null) != null
-      ] : [
+        ] : [
         for location in [local.node_groups_locations[0]] : location.subnet_id
       ]
 

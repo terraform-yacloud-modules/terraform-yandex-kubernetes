@@ -1,9 +1,9 @@
 module "iam_accounts" {
   for_each = {
-  for k, v in var.iam : k => v if v["enabled"]
+    for k, v in var.iam : k => v if v["enabled"]
   }
 
-  source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account"
+  source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account?ref=v1.0.0"
 
   name = each.key
 
@@ -16,7 +16,7 @@ module "iam_accounts" {
 }
 
 module "network" {
-  source  = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-vpc.git"
+  source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-vpc.git?ref=v1.0.0"
 
   blank_name = "test-network"
   labels     = {}
@@ -48,7 +48,7 @@ module "clusters" {
       zone      = module.network.private_subnets[0].zone
       subnet_id = module.network.private_subnets[0].id
     }
-  ] : [
+    ] : [
     {
       zone      = module.network.private_subnets[0].zone
       subnet_id = module.network.private_subnets[0].id
