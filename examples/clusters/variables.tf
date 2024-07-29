@@ -1,5 +1,7 @@
 variable "azs" {
-  default = ["ru-central1-a", "ru-central1-b", "ru-central1-c"]
+  description = "List of availability zones to use"
+  type        = list(string)
+  default     = ["ru-central1-a", "ru-central1-b", "ru-central1-c"]
 }
 
 variable "subnets" {
@@ -12,7 +14,7 @@ variable "subnets" {
 variable "iam" {
   default = {
     cluster01-node = {
-      enabled      = true
+      enabled = true
       folder_roles = [
         "editor",
         "container-registry.images.puller",
@@ -44,9 +46,9 @@ variable "clusters" {
 
       type = "zonal"
 
-      master_version             = "1.27"
-      master_public_ip           = true
-      master_auto_upgrade        = false
+      master_version      = "1.27"
+      master_public_ip    = true
+      master_auto_upgrade = false
       master_maintenance_windows = [
         {
           start_time = "23:00"
