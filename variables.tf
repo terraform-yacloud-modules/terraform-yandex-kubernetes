@@ -285,3 +285,9 @@ variable "node_groups_default_security_groups_ids" {
   type        = list(string)
   default     = []
 }
+
+variable "enable_oslogin" {
+  description = "Enable OS Login for node groups"
+  type        = bool
+  default     = false
+}

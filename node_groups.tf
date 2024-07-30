@@ -17,7 +17,11 @@ resource "yandex_kubernetes_node_group" "node_groups" {
 
   instance_template {
     platform_id = each.value["platform_id"]
-    metadata    = merge(local.node_groups_ssh_keys_metadata, each.value["metadata"])
+    metadata    = merge(
+      local.node_groups_ssh_keys_metadata,
+      each.value["metadata"],
+        var.enable_oslogin ? { "enable-oslogin" = "true" } : {}
+    )
 
     resources {
       memory        = each.value["memory"]
