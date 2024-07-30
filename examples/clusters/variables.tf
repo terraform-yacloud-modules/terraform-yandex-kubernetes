@@ -5,6 +5,8 @@ variable "azs" {
 }
 
 variable "subnets" {
+  description = "A map of subnet configurations, where 'public' and 'private' keys contain lists of CIDR blocks for public and private subnets respectively."
+  type        = map(list(list(string)))
   default = {
     public  = []
     private = [["10.4.0.0/24"], ["10.5.0.0/24"], ["10.6.0.0/24"]]
