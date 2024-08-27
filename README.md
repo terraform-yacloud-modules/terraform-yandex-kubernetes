@@ -48,6 +48,7 @@ No modules.
 | <a name="input_cluster_ipv6_range"></a> [cluster\_ipv6\_range](#input\_cluster\_ipv6\_range) | Identical to cluster\_ipv4\_range but for IPv6 protocol | `string` | `null` | no |
 | <a name="input_cni_type"></a> [cni\_type](#input\_cni\_type) | Type of K8S CNI which will be used for the cluster | `string` | `"calico"` | no |
 | <a name="input_description"></a> [description](#input\_description) | K8S cluster description | `string` | `""` | no |
+| <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enable OS Login for node groups | `bool` | `false` | no |
 | <a name="input_generate_default_ssh_key"></a> [generate\_default\_ssh\_key](#input\_generate\_default\_ssh\_key) | If true, SSH key for node groups will be generated | `bool` | `true` | no |
 | <a name="input_kms_provider_key_id"></a> [kms\_provider\_key\_id](#input\_kms\_provider\_key\_id) | K8S cluster KMS key ID | `string` | `null` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | A set of labels to assign to the K8S cluster | `map(string)` | `{}` | no |
