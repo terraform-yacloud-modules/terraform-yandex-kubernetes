@@ -247,6 +247,7 @@ variable "node_groups" {
     max_expansion             = optional(string, null)
     max_unavailable           = optional(string, null)
     zones                     = optional(list(string), null)
+    subnet_ids                = optional(list(string), null)
   }))
   default = {}
 }

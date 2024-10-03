@@ -50,12 +50,12 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     network_interface {
       #
       # The logic is the following:
-      #   if "node_groups" object contains "zones" key, take all "subnet_ids"
+      #   try subnet_ids in each node group and then if "node_groups" object contains "zones" key, take all "subnet_ids"
       #   variables in a list format based on "zones" from "node_groups_locations" variable.
       #
       #   otherwise, take the first one list of objects from "node_groups_locations"
       #
-      subnet_ids = each.value["zones"] != null ? [
+      subnet_ids = try(each.value["subnet_ids"], each.value["zones"] != null ? [
         for zone in each.value["zones"] : lookup(
           { for item in local.node_groups_locations : item.zone => item.subnet_id },
           zone,
@@ -64,7 +64,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
         if lookup({ for item in local.node_groups_locations : item.zone => item.subnet_id }, zone, null) != null
         ] : [
         for location in [local.node_groups_locations[0]] : location.subnet_id
-      ]
+      ])
 
       ipv4               = true
       ipv6               = false
