@@ -234,7 +234,7 @@ variable "node_groups" {
     placement_group_id        = optional(string, null)
     nat                       = optional(bool, false)
     security_group_ids        = optional(list(string))
-    network_acceleration_type = optional(string, null)
+    network_acceleration_type = optional(string, "standard")
     container_runtime_type    = optional(string, "containerd")
     fixed_scale               = optional(map(string), null)
     auto_scale                = optional(map(string), null)
