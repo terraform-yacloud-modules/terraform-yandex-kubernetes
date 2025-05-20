@@ -110,7 +110,7 @@ variable "clusters" {
 
       type = "zonal"
 
-      master_version      = "1.27"
+      master_version      = "1.30"
       master_public_ip    = true
       master_auto_upgrade = false
       master_maintenance_windows = [
