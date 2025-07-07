@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: "Terraform"
 on:
   push:
     branches:
@@ -14,52 +14,44 @@ concurrency:
 
 jobs:
   linters:
-    name: 'Terraform Linters'
+    name: "Terraform Linters"
     runs-on: ubuntu-24.04
     defaults:
       run:
         shell: bash
     steps:
-      -
-        name: Check out code
+      - name: Check out code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      -
-        name: Setup Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.tf_version }}
           terraform_wrapper: false
-      -
-        name: Setup TFLint
+      - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: ${{ env.tflint_version }}
-      -
-        name: Setup TFLint cache plugin dir
+      - name: Setup TFLint cache plugin dir
         uses: actions/cache@v4.2.3
         with:
           path: ~/.tflint.d/plugins
           key: tflint-${{ hashFiles('.tflint.hcl') }}
-      -
-        name: Test code with terraform fmt
+      - name: Test code with terraform fmt
         run: terraform fmt --recursive -check=true --diff
         continue-on-error: true
-      -
-        name: Test code with TFLint
+      - name: Test code with TFLint
         continue-on-error: true
         run: |
           tflint --init
           tflint -f compact
-      -
-        name: Test code with TFSec
+      - name: Test code with TFSec
         continue-on-error: true
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: true
-      -
-        name: Test code with Checkov
+      - name: Test code with Checkov
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: /
@@ -68,7 +60,7 @@ jobs:
           quiet: true
           download_external_modules: false
   semver:
-    name: 'Set code version tag'
+    name: "Set code version tag"
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -78,24 +70,22 @@ jobs:
       run:
         shell: bash
     steps:
-      -
-        name: Check out code
+      - name: Check out code
         uses: actions/checkout@v4
         if: github.event_name == 'pull_request'
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-      -
-        name: Check out code
+      - name: Check out code
         uses: actions/checkout@v4
         if: github.event_name == 'push'
         with:
           fetch-depth: 0
-      -
-        name: Set application version
+      - name: Set application version
         id: set_version
-        uses: kvendingoldo/semver-action@v1.20
+        uses: kvendingoldo/git-flow-action@v2.2.0
         with:
-          enable_github_releases: true
-          release_tag_prefix: "v"
+          enable_github_release: true
+          auto_release_branches: main
+          tag_prefix_release: "v"
           github_token: "${{ secrets.GITHUB_TOKEN }}"
