@@ -21,7 +21,7 @@ jobs:
         shell: bash
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Setup Terraform
@@ -71,13 +71,13 @@ jobs:
         shell: bash
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: github.event_name == 'pull_request'
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: github.event_name == 'push'
         with:
           fetch-depth: 0
