@@ -30,7 +30,7 @@ jobs:
           terraform_version: ${{ env.tf_version }}
           terraform_wrapper: false
       - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@v5
         with:
           tflint_version: ${{ env.tflint_version }}
       - name: Setup TFLint cache plugin dir
