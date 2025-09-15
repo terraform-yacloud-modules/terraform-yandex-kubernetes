@@ -1,3 +1,25 @@
+data "yandex_client_config" "client" {}
+
+
+
+module "network" {
+  source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-vpc.git?ref=v1.0.0"
+
+  folder_id = data.yandex_client_config.client.folder_id
+
+  blank_name = "vpc-nat-gateway"
+  labels = {
+    repo = "terraform-yacloud-modules/terraform-yandex-vpc"
+  }
+
+  azs = ["ru-central1-a"]
+
+  private_subnets = [["10.4.0.0/24"]]
+
+  create_vpc         = true
+  create_nat_gateway = true
+}
+
 module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account?ref=v1.0.0"
 
@@ -22,7 +44,7 @@ module "iam_accounts" {
 module "kube" {
   source = "../../"
 
-  network_id = "xxxx"
+  network_id = module.network.vpc_id
 
   name = "k8s-test"
 
@@ -32,15 +54,16 @@ module "kube" {
   master_locations = [
     {
       zone      = "ru-central1-a"
-      subnet_id = "xxxx"
+      subnet_id = module.network.private_subnets_ids[0]
     }
   ]
 
   node_groups = {
     "default" = {
-      nat    = true
-      cores  = 2
-      memory = 8
+      subnet_ids = [module.network.private_subnets_ids[0]]
+      nat        = true
+      cores      = 2
+      memory     = 8
       fixed_scale = {
         size = 3
       }
