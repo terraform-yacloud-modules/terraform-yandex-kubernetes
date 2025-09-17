@@ -59,18 +59,20 @@ module "kube" {
 
   node_groups = {
     "fixed-scale" = {
-      nat    = true
-      cores  = 2
-      memory = 4
+      subnet_ids = [module.network.private_subnets_ids[0]]
+      nat        = true
+      cores      = 2
+      memory     = 4
       fixed_scale = {
         size = 1
       }
     }
 
     "auto-scale" = {
-      nat    = true
-      cores  = 2
-      memory = 8
+      subnet_ids = [module.network.private_subnets_ids[0]]
+      nat        = true
+      cores      = 2
+      memory     = 8
       auto_scale = {
         min     = 1
         max     = 5

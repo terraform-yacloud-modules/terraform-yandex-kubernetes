@@ -32,3 +32,8 @@ output "default_ssh_key_prv" {
   description = "Default node groups that is attached to all node groups"
   value       = var.generate_default_ssh_key ? tls_private_key.default_ssh_key[0].private_key_openssh : null
 }
+
+output "get_credentials_command" {
+  description = "Command to get kubeconfig for the cluster"
+  value       = "yc managed-kubernetes cluster get-credentials --id ${yandex_kubernetes_cluster.main.id} --external"
+}
