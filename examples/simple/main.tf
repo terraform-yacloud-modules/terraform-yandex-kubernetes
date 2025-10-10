@@ -42,7 +42,7 @@ module "network" {
 module "kube" {
   source = "../../"
 
-  network_id  = module.network.vpc_id
+  network_id = module.network.vpc_id
 
   name = "test-kubernetes"
 
