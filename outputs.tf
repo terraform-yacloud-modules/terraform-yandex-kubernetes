@@ -37,13 +37,3 @@ output "get_credentials_command" {
   description = "Command to get kubeconfig for the cluster"
   value       = "yc managed-kubernetes cluster get-credentials --id ${yandex_kubernetes_cluster.main.id} --external"
 }
-
-output "log_group_id" {
-  description = "ID of the Yandex Cloud Logging group"
-  value       = var.master_logging["create_log_group"] ? yandex_logging_group.logging_group[0].id : null
-}
-
-output "log_group_name" {
-  description = "Name of the Yandex Cloud Logging group"
-  value       = var.master_logging["create_log_group"] ? yandex_logging_group.logging_group[0].name : null
-}
