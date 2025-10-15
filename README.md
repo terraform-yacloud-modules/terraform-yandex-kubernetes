@@ -86,8 +86,6 @@ No modules.
 | <a name="output_external_v4_endpoint"></a> [external\_v4\_endpoint](#output\_external\_v4\_endpoint) | An IPv4 external network address that is assigned to the master |
 | <a name="output_get_credentials_command"></a> [get\_credentials\_command](#output\_get\_credentials\_command) | Command to get kubeconfig for the cluster |
 | <a name="output_internal_v4_endpoint"></a> [internal\_v4\_endpoint](#output\_internal\_v4\_endpoint) | An IPv4 internal network address that is assigned to the master |
-| <a name="output_log_group_id"></a> [log\_group\_id](#output\_log\_group\_id) | ID of the Yandex Cloud Logging group |
-| <a name="output_log_group_name"></a> [log\_group\_name](#output\_log\_group\_name) | Name of the Yandex Cloud Logging group |
 | <a name="output_node_groups"></a> [node\_groups](#output\_node\_groups) | Attributes of yandex\_node\_group resources created in cluster |
 <!-- END_TF_DOCS -->
 

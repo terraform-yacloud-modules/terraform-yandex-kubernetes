@@ -87,7 +87,7 @@ module "kube" {
         max     = 5
         initial = 1
       }
-      zones = ["ru-central1-a"]
+      zones      = ["ru-central1-a"]
       subnet_ids = [module.network.private_subnets_ids[0]]
     }
 
@@ -100,7 +100,7 @@ module "kube" {
         max     = 5
         initial = 1
       }
-      zones = ["ru-central1-b"]
+      zones      = ["ru-central1-b"]
       subnet_ids = [module.network.private_subnets_ids[1]]
     }
   }

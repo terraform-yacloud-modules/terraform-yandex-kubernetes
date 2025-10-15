@@ -62,9 +62,9 @@ module "kube" {
 
   node_groups = {
     "default" = {
-      nat    = true
-      cores  = 2
-      memory = 8
+      nat        = true
+      cores      = 2
+      memory     = 8
       subnet_ids = [module.network.private_subnets_ids[0]]
       fixed_scale = {
         size = 3
