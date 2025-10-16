@@ -1,7 +1,5 @@
 data "yandex_client_config" "client" {}
 
-
-
 module "network" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-vpc.git?ref=v1.0.0"
 

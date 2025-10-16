@@ -44,7 +44,7 @@ module "kube" {
 
   network_id = module.network.vpc_id
 
-  name           = "k8s-test"
+  name           = "k8s-test3"
   enable_oslogin = true
 
   service_account_id      = module.iam_accounts.id

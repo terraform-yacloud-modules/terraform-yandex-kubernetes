@@ -40,10 +40,10 @@ output "get_credentials_command" {
 
 output "log_group_id" {
   description = "ID of the Yandex Cloud Logging group"
-  value       = var.master_logging["create_log_group"] ? yandex_logging_group.logging_group[0].id : null
+  value       = var.master_logging["create_log_group"] ? yandex_logging_group.main[0].id : null
 }
 
 output "log_group_name" {
   description = "Name of the Yandex Cloud Logging group"
-  value       = var.master_logging["create_log_group"] ? yandex_logging_group.logging_group[0].name : null
+  value       = var.master_logging["create_log_group"] ? yandex_logging_group.main[0].name : null
 }
