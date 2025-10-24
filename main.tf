@@ -37,9 +37,15 @@ resource "yandex_kubernetes_cluster" "main" {
 
   dynamic "kms_provider" {
     for_each = var.kms_provider_key_id != null ? [var.kms_provider_key_id] : []
-
     content {
       key_id = kms_provider.value
+    }
+  }
+
+  dynamic "workload_identity_federation" {
+    for_each = var.workload_identity_federation["enabled"] ? [1] : []
+    content {
+      enabled = true
     }
   }
 
