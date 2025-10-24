@@ -16,6 +16,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
   version = lookup(each.value, "version", var.master_version)
 
   instance_template {
+    name        = each.value["instance_name_template"]
     platform_id = each.value["platform_id"]
     metadata = merge(
       local.node_groups_ssh_keys_metadata,
@@ -47,6 +48,21 @@ resource "yandex_kubernetes_node_group" "node_groups" {
       }
     }
 
+    dynamic "gpu_settings" {
+      for_each = each.value["gpu_settings"] != null ? [each.value["gpu_settings"]] : []
+      content {
+        gpu_cluster_id  = lookup(gpu_settings.value, "gpu_cluster_id", null)
+        gpu_environment = lookup(gpu_settings.value, "gpu_environment", null)
+      }
+    }
+
+    dynamic "container_network" {
+      for_each = each.value["container_network_mtu"] != null ? [each.value["container_network_mtu"]] : []
+      content {
+        pod_mtu = container_network.value
+      }
+    }
+
     network_interface {
       #
       # The logic is the following:
@@ -70,8 +86,26 @@ resource "yandex_kubernetes_node_group" "node_groups" {
       ipv6               = false
       nat                = each.value["nat"]
       security_group_ids = each.value.security_group_ids != null ? each.value.security_group_ids : var.node_groups_default_security_groups_ids
-      # TODO: ipv4_dns_records
-      # TODO: ipv6_dns_records
+
+      dynamic "ipv4_dns_records" {
+        for_each = each.value["ipv4_dns_records"] != null ? each.value["ipv4_dns_records"] : []
+        content {
+          fqdn        = ipv4_dns_records.value["fqdn"]
+          dns_zone_id = lookup(ipv4_dns_records.value, "dns_zone_id", null)
+          ptr         = lookup(ipv4_dns_records.value, "ptr", false)
+          ttl         = lookup(ipv4_dns_records.value, "ttl", null)
+        }
+      }
+
+      dynamic "ipv6_dns_records" {
+        for_each = each.value["ipv6_dns_records"] != null ? each.value["ipv6_dns_records"] : []
+        content {
+          fqdn        = ipv6_dns_records.value["fqdn"]
+          dns_zone_id = lookup(ipv6_dns_records.value, "dns_zone_id", null)
+          ptr         = lookup(ipv6_dns_records.value, "ptr", false)
+          ttl         = lookup(ipv6_dns_records.value, "ttl", null)
+        }
+      }
     }
 
     network_acceleration_type = each.value["network_acceleration_type"]

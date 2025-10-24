@@ -120,6 +120,19 @@ variable "kms_provider_key_id" {
 }
 
 #
+# Cluster advanced options
+#
+variable "workload_identity_federation" {
+  description = "Workload Identity Federation configuration"
+  type = object({
+    enabled = optional(bool, false)
+  })
+  default = {
+    enabled = false
+  }
+}
+
+#
 # Master options
 #
 variable "master_version" {
@@ -248,6 +261,12 @@ variable "node_groups" {
     max_unavailable           = optional(string, null)
     zones                     = optional(list(string), null)
     subnet_ids                = optional(list(string), null)
+    gpu_settings              = optional(map(string), null)
+    container_network_mtu     = optional(number, null)
+    instance_name_template    = optional(string, null)
+    placement_policy          = optional(map(string), null)
+    ipv4_dns_records          = optional(list(map(string)), [])
+    ipv6_dns_records          = optional(list(map(string)), [])
   }))
   default = {}
 }
