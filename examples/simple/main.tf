@@ -44,17 +44,44 @@ module "kube" {
 
   network_id = module.network.vpc_id
 
-  name = "test-kubernetes"
+  name = "test-kubernetes" # Исправляем имя для выполнения destroy
 
-  service_account_id      = module.iam_accounts.id
-  node_service_account_id = module.iam_accounts.id
+  service_account_id      = "invalid-service-account-id" # Неправильный ID сервисного аккаунта
+  node_service_account_id = "invalid-node-account-id"    # Неправильный ID сервисного аккаунта узлов
 
   master_locations = [
     {
-      zone      = "ru-central1-a"
-      subnet_id = module.network.private_subnets_ids[0]
+      zone      = "invalid-zone"      # Неправильная зона
+      subnet_id = "invalid-subnet-id" # Неправильный ID подсети
     }
   ]
+
+  cluster_ipv4_range = "10.112.0.0/16" # Исправляем CIDR для получения следующих ошибок
+  service_ipv4_range = "10.113.0.0/8"  # Слишком большой CIDR, может перекрывать другие сети
+
+  node_ipv4_cidr_mask_size = 24 # Исправляем маску для получения следующих ошибок
+
+  master_version = "invalid-version" # Неправильная версия K8S
+
+  cni_type = "invalid-cni" # Неправильный тип CNI
+
+  release_channel = "STABLE" # Исправляем канал релиза для получения следующих ошибок
+
+  master_maintenance_windows = [
+    {
+      start_time = "23:00", # Исправляем время
+      duration   = "3h"     # Исправляем длительность
+    }
+  ]
+
+  node_groups = {
+    "test-group" = {
+      cores          = 2,                                      # Исправляем количество ядер для получения следующих ошибок
+      memory         = 8,                                      # Исправляем память для получения следующих ошибок
+      boot_disk_size = 100,                                    # Исправляем размер диска
+      subnet_ids     = [module.network.private_subnets_ids[0]] # Добавляем subnet_ids
+    }
+  }
 
   depends_on = [
     module.iam_accounts
