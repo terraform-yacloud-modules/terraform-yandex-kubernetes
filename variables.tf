@@ -8,6 +8,11 @@
 variable "name" {
   description = "K8S cluster name"
   type        = string
+
+  validation {
+    condition     = length(var.name) > 0
+    error_message = "Cluster name cannot be empty"
+  }
 }
 
 variable "description" {
@@ -39,6 +44,11 @@ variable "cluster_ipv4_range" {
   EOF
   type        = string
   default     = null
+
+  validation {
+    condition     = var.cluster_ipv4_range == null ? true : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.cluster_ipv4_range))
+    error_message = "cluster_ipv4_range must be a valid CIDR format (e.g., 10.112.0.0/16)"
+  }
 }
 
 variable "cluster_ipv6_range" {
@@ -54,6 +64,11 @@ variable "node_ipv4_cidr_mask_size" {
   EOF
   type        = number
   default     = null
+
+  validation {
+    condition     = var.node_ipv4_cidr_mask_size == null ? true : contains([0, 24, 25, 26, 27, 28], var.node_ipv4_cidr_mask_size)
+    error_message = "node_ipv4_cidr_mask_size must be one of: 0, 24, 25, 26, 27, 28"
+  }
 }
 
 variable "service_ipv4_range" {
@@ -64,6 +79,11 @@ variable "service_ipv4_range" {
   EOF
   type        = string
   default     = null
+
+  validation {
+    condition     = var.service_ipv4_range == null ? true : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.service_ipv4_range))
+    error_message = "service_ipv4_range must be a valid CIDR format (e.g., 10.113.0.0/16)"
+  }
 }
 
 variable "service_ipv6_range" {
@@ -111,6 +131,11 @@ variable "release_channel" {
   description = "K8S cluster release channel"
   type        = string
   default     = "STABLE"
+
+  validation {
+    condition     = contains(["RAPID", "REGULAR", "STABLE", "RELEASE_CHANNEL_UNSPECIFIED"], var.release_channel)
+    error_message = "release_channel must be one of: RAPID, REGULAR, STABLE, RELEASE_CHANNEL_UNSPECIFIED"
+  }
 }
 
 variable "kms_provider_key_id" {
@@ -201,6 +226,15 @@ variable "master_maintenance_windows" {
       duration   = "3h"
     }
   ]
+
+  validation {
+    condition = alltrue([
+      for window in var.master_maintenance_windows :
+      can(regex("^([0-1][0-9]|2[0-3]):[0-5][0-9]$", window["start_time"])) &&
+      can(regex("^[0-9]+(h|m)$", window["duration"]))
+    ])
+    error_message = "Each maintenance window must have valid start_time (HH:MM) and duration (e.g., 3h, 30m)"
+  }
 }
 
 
@@ -237,12 +271,12 @@ variable "node_groups" {
     version                   = optional(string, null)
     metadata                  = optional(map(string), {})
     platform_id               = optional(string, null)
-    memory                    = optional(string, 2)
-    cores                     = optional(string, 2)
-    core_fraction             = optional(string, 100)
-    gpus                      = optional(string, null)
+    memory                    = optional(number, 2)
+    cores                     = optional(number, 2)
+    core_fraction             = optional(number, 100)
+    gpus                      = optional(number, null)
     boot_disk_type            = optional(string, "network-hdd")
-    boot_disk_size            = optional(string, 100)
+    boot_disk_size            = optional(number, 100)
     preemptible               = optional(bool, false)
     placement_group_id        = optional(string, null)
     nat                       = optional(bool, false)
@@ -257,8 +291,8 @@ variable "node_groups" {
     node_labels               = optional(map(string), null)
     node_taints               = optional(list(string), null)
     allowed_unsafe_sysctls    = optional(list(string), [])
-    max_expansion             = optional(string, null)
-    max_unavailable           = optional(string, null)
+    max_expansion             = optional(number, null)
+    max_unavailable           = optional(number, null)
     zones                     = optional(list(string), null)
     subnet_ids                = optional(list(string), null)
     gpu_settings              = optional(map(string), null)
