@@ -10,8 +10,8 @@ variable "name" {
   type        = string
 
   validation {
-    condition     = length(var.name) > 0
-    error_message = "Cluster name cannot be empty"
+    condition     = length(var.name) > 0 && can(regex("^[a-zA-Z][a-zA-Z0-9-]*$", var.name))
+    error_message = "Cluster name must be non-empty and can only contain alphanumeric characters and hyphens"
   }
 }
 
@@ -46,9 +46,10 @@ variable "cluster_ipv4_range" {
   default     = null
 
   validation {
-    condition     = var.cluster_ipv4_range == null ? true : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.cluster_ipv4_range))
-    error_message = "cluster_ipv4_range must be a valid CIDR format (e.g., 10.112.0.0/16)"
+    condition     = var.cluster_ipv4_range == null ? true : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", var.cluster_ipv4_range)) && cidrsubnet(var.cluster_ipv4_range, 0, 0) != null
+    error_message = "cluster_ipv4_range must be a valid CIDR format (e.g., 10.112.0.0/16) and valid subnet"
   }
+
 }
 
 variable "cluster_ipv6_range" {
@@ -69,6 +70,7 @@ variable "node_ipv4_cidr_mask_size" {
     condition     = var.node_ipv4_cidr_mask_size == null ? true : contains([0, 24, 25, 26, 27, 28], var.node_ipv4_cidr_mask_size)
     error_message = "node_ipv4_cidr_mask_size must be one of: 0, 24, 25, 26, 27, 28"
   }
+
 }
 
 variable "service_ipv4_range" {
@@ -136,6 +138,7 @@ variable "release_channel" {
     condition     = contains(["RAPID", "REGULAR", "STABLE", "RELEASE_CHANNEL_UNSPECIFIED"], var.release_channel)
     error_message = "release_channel must be one of: RAPID, REGULAR, STABLE, RELEASE_CHANNEL_UNSPECIFIED"
   }
+
 }
 
 variable "kms_provider_key_id" {
@@ -235,6 +238,7 @@ variable "master_maintenance_windows" {
     ])
     error_message = "Each maintenance window must have valid start_time (HH:MM) and duration (e.g., 3h, 30m)"
   }
+
 }
 
 
