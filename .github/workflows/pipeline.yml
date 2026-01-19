@@ -34,7 +34,7 @@ jobs:
         with:
           tflint_version: ${{ env.tflint_version }}
       - name: Setup TFLint cache plugin dir
-        uses: actions/cache@v5.0.1
+        uses: actions/cache@v5.0.2
         with:
           path: ~/.tflint.d/plugins
           key: tflint-${{ hashFiles('.tflint.hcl') }}
