@@ -1,3 +1,8 @@
+## v1.48.0 - 2026-02-24
+### Miscellaneous
+- 4710a95 Merge pull request [#112](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/112) from terraform-yacloud-modules/dependabot/github_actions/kvendingoldo/git-flow-action-2.16.0
+- 0478e4c build(deps): bump kvendingoldo/git-flow-action from 2.2.0 to 2.16.0
+
 ## v1.47.0
 ## v1.46.0
 ## v1.45.0
