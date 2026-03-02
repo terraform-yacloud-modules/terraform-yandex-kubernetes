@@ -1,3 +1,8 @@
+## v1.49.0 - 2026-03-02
+### Miscellaneous
+- fbbcafa Merge pull request [#113](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/113) from terraform-yacloud-modules/dependabot/github_actions/hashicorp/setup-terraform-4
+- 6d9b180 build(deps): bump hashicorp/setup-terraform from 3 to 4
+
 ## v1.48.0 - 2026-02-24
 ### Miscellaneous
 - 4710a95 Merge pull request [#112](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/112) from terraform-yacloud-modules/dependabot/github_actions/kvendingoldo/git-flow-action-2.16.0
