@@ -56,8 +56,11 @@ module "kube" {
     }
   ]
 
+  # Logs to folder's default log group (folder_id); set create_log_group = false when using folder_id
   master_logging = {
-    enabled = true
+    enabled          = true
+    create_log_group = false
+    folder_id        = data.yandex_client_config.client.folder_id
   }
 
   node_groups = {
