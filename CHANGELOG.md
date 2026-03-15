@@ -1,3 +1,7 @@
+## v1.50.0 - 2026-03-15
+### Miscellaneous
+- 8c6c3cc Add  require both deploy_policy fields, validate boot_disk_size ([#114](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/114))
+
 ## v1.49.0 - 2026-03-02
 ### Miscellaneous
 - fbbcafa Merge pull request [#113](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/113) from terraform-yacloud-modules/dependabot/github_actions/hashicorp/setup-terraform-4
