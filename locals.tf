@@ -23,4 +23,10 @@ locals {
   } : {}
 
   node_groups_locations = var.node_groups_locations != null ? var.node_groups_locations : var.master_locations
+
+  # Only one of log_group_id or folder_id may be set for master_logging
+  master_logging_log_group_id = var.master_logging["folder_id"] != "" ? null : (
+    var.master_logging["log_group_id"] != "" ? var.master_logging["log_group_id"] : (var.master_logging["create_log_group"] ? yandex_logging_group.main[0].id : null)
+  )
+  master_logging_folder_id = var.master_logging["folder_id"] != "" ? var.master_logging["folder_id"] : null
 }

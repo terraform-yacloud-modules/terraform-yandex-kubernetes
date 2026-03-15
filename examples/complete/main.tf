@@ -60,7 +60,7 @@ module "kube" {
   node_service_account_id = module.iam_accounts.id
 
   release_channel = "STABLE"
-  master_version  = "1.30"
+  master_version  = "1.31"
 
   master_public_ip    = true
   master_auto_upgrade = false
@@ -95,10 +95,11 @@ module "kube" {
     }
   ]
 
+  # Regional cluster: use folder_id to send logs to folder's default log group (create_log_group = false)
   master_logging = {
     enabled                    = false
-    create_log_group           = true
-    log_group_retention_period = "168h"
+    create_log_group           = false
+    folder_id                  = data.yandex_client_config.client.folder_id
     audit_enabled              = true
     kube_apiserver_enabled     = true
     cluster_autoscaler_enabled = true
@@ -109,21 +110,24 @@ module "kube" {
 
   node_groups = {
     "fixed-scale" = {
-      description    = "Fixed scale node group across all zones"
-      nat            = true
-      cores          = 2
-      memory         = 4
-      core_fraction  = 100
-      boot_disk_type = "network-hdd"
-      boot_disk_size = 100
-      preemptible    = false
+      description            = "Fixed scale node group across all zones"
+      instance_name_template = "node-{instance.short_id}"
+      nat                    = true
+      cores                  = 2
+      memory                 = 4
+      core_fraction          = 100
+      boot_disk_type         = "network-hdd"
+      boot_disk_size         = 100
+      preemptible            = false
       fixed_scale = {
         size = 1
       }
-      zones        = ["ru-central1-a", "ru-central1-b", "ru-central1-d"]
-      subnet_ids   = [module.network.private_subnets_ids[0], module.network.private_subnets_ids[1], module.network.private_subnets_ids[2]]
-      auto_repair  = true
-      auto_upgrade = true
+      zones           = ["ru-central1-a", "ru-central1-b", "ru-central1-d"]
+      subnet_ids      = [module.network.private_subnets_ids[0], module.network.private_subnets_ids[1], module.network.private_subnets_ids[2]]
+      auto_repair     = true
+      auto_upgrade    = true
+      max_expansion   = 1
+      max_unavailable = 0
       node_labels = {
         node-type = "fixed"
       }

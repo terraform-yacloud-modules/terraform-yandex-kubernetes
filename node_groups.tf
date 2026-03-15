@@ -16,6 +16,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
   version = lookup(each.value, "version", var.master_version)
 
   instance_template {
+    # name is optional; if null, provider uses default: {instance_group.id}-{instance.short_id}
     name        = each.value["instance_name_template"]
     platform_id = each.value["platform_id"]
     metadata = merge(
@@ -171,7 +172,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
   allowed_unsafe_sysctls = each.value["allowed_unsafe_sysctls"]
 
   dynamic "deploy_policy" {
-    for_each = each.value["max_expansion"] != null || each.value["max_unavailable"] != null ? [1] : []
+    for_each = each.value["max_expansion"] != null && each.value["max_unavailable"] != null ? [1] : []
 
     content {
       max_expansion   = each.value["max_expansion"]

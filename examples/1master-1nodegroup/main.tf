@@ -59,7 +59,7 @@ module "kube" {
   node_service_account_id = module.iam_accounts.id
 
   release_channel = "STABLE"
-  master_version  = "1.30"
+  master_version  = "1.31"
 
   master_public_ip    = true
   master_auto_upgrade = false
@@ -96,20 +96,23 @@ module "kube" {
 
   node_groups = {
     "default" = {
-      description    = "Default node group"
-      subnet_ids     = [module.network.private_subnets_ids[0]]
-      nat            = true
-      cores          = 2
-      memory         = 8
-      core_fraction  = 100
-      boot_disk_type = "network-hdd"
-      boot_disk_size = 100
-      preemptible    = false
+      description            = "Default node group"
+      instance_name_template = "node-{instance.short_id}"
+      subnet_ids             = [module.network.private_subnets_ids[0]]
+      nat                    = true
+      cores                  = 2
+      memory                 = 8
+      core_fraction          = 100
+      boot_disk_type         = "network-hdd"
+      boot_disk_size         = 100
+      preemptible            = false
       fixed_scale = {
         size = 3
       }
-      auto_repair  = true
-      auto_upgrade = true
+      auto_repair     = true
+      auto_upgrade    = true
+      max_expansion   = 1
+      max_unavailable = 0
       node_labels = {
         node-type = "default"
       }

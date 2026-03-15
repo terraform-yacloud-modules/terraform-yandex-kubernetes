@@ -166,7 +166,7 @@ variable "workload_identity_federation" {
 variable "master_version" {
   description = "Version of K8S that will be used for master"
   type        = string
-  default     = "1.30"
+  default     = "1.31"
 }
 
 variable "master_public_ip" {
@@ -243,12 +243,17 @@ variable "master_maintenance_windows" {
 
 
 variable "master_logging" {
-  description = "Master logging"
+  description = <<-EOF
+  Master logging. Only one of log_group_id or folder_id may be set.
+  If log_group_id is set, logs go to that group. If folder_id is set, logs go to folder's default log group.
+  If neither is set (and enabled=true), logs go to the cluster folder's default log group.
+  EOF
   type = object({
     enabled                    = bool
     create_log_group           = optional(bool, true)
     log_group_retention_period = optional(string, "168h")
     log_group_id               = optional(string, "")
+    folder_id                  = optional(string, "")
     audit_enabled              = optional(bool, true)
     kube_apiserver_enabled     = optional(bool, true)
     cluster_autoscaler_enabled = optional(bool, true)
@@ -280,7 +285,7 @@ variable "node_groups" {
     core_fraction             = optional(number, 100)
     gpus                      = optional(number, null)
     boot_disk_type            = optional(string, "network-hdd")
-    boot_disk_size            = optional(number, 100)
+    boot_disk_size            = optional(number, 100) # min 64 GB per provider
     preemptible               = optional(bool, false)
     placement_group_id        = optional(string, null)
     nat                       = optional(bool, false)
@@ -307,6 +312,11 @@ variable "node_groups" {
     ipv6_dns_records          = optional(list(map(string)), [])
   }))
   default = {}
+
+  validation {
+    condition     = alltrue([for _, ng in var.node_groups : ng.boot_disk_size >= 64])
+    error_message = "Each node group boot_disk_size must be at least 64 GB."
+  }
 }
 
 variable "generate_default_ssh_key" {
