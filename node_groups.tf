@@ -72,16 +72,18 @@ resource "yandex_kubernetes_node_group" "node_groups" {
       #
       #   otherwise, take the first one list of objects from "node_groups_locations"
       #
-      subnet_ids = try(lookup(each.value, "subnet_ids", null), each.value["zones"] != null ? [
-        for zone in each.value["zones"] : lookup(
-          { for item in local.node_groups_locations : item.zone => item.subnet_id },
-          zone,
-          null
-        )
-        if lookup({ for item in local.node_groups_locations : item.zone => item.subnet_id }, zone, null) != null
-        ] : [
-        for location in [local.node_groups_locations[0]] : location.subnet_id
-      ])
+      subnet_ids = lookup(each.value, "subnet_ids", null) != null ? each.value["subnet_ids"] : (
+        each.value["zones"] != null ? [
+          for zone in each.value["zones"] : lookup(
+            { for item in local.node_groups_locations : item.zone => item.subnet_id },
+            zone,
+            null
+          )
+          if lookup({ for item in local.node_groups_locations : item.zone => item.subnet_id }, zone, null) != null
+          ] : [
+          for location in [local.node_groups_locations[0]] : location.subnet_id
+        ]
+      )
 
       ipv4               = true
       ipv6               = false
