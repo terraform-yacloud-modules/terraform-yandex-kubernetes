@@ -1,3 +1,10 @@
+## v1.53.0 - 2026-05-27
+### Chores
+- 20d5dba chore(release): version v1.51.0 [skip ci]
+
+### Miscellaneous
+- ad5bb52 trigger ci build
+
 ## v1.51.0 - 2026-05-27
 ### Chores
 - a7fe30e chore(release): version v1.51.0 [skip ci]
