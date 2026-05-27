@@ -1,4 +1,15 @@
 ## v1.51.0 - 2026-05-27
+### Chores
+- 295b28c chore(release): version v1.51.0 [skip ci]
+
+### Miscellaneous
+- 9e08b14 Fix subnet_ids
+- 46f1192 Merge pull request [#116](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/116) from terraform-yacloud-modules/dependabot/github_actions/actions/cache-5.0.5
+- c48cfdd return folder_id
+- 339c343 return folder_id
+- 390427f build(deps): bump actions/cache from 5.0.3 to 5.0.5
+
+## v1.51.0 - 2026-05-27
 ### Miscellaneous
 - 46f1192 Merge pull request [#116](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/116) from terraform-yacloud-modules/dependabot/github_actions/actions/cache-5.0.5
 - c48cfdd return folder_id
