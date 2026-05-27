@@ -1,3 +1,7 @@
+## v1.54.0 - 2026-05-27
+### Bug Fixes
+- 178c665 fix: subnet_ids
+
 ## v1.53.0 - 2026-05-27
 ### Chores
 - 20d5dba chore(release): version v1.51.0 [skip ci]
