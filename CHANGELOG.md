@@ -1,3 +1,7 @@
+## v1.51.0 - 2026-05-27
+### Miscellaneous
+- 339c343 return folder_id
+
 ## v1.50.0 - 2026-03-15
 ### Miscellaneous
 - 8c6c3cc Add  require both deploy_policy fields, validate boot_disk_size ([#114](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/114))
