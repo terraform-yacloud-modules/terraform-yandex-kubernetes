@@ -72,7 +72,7 @@ resource "yandex_kubernetes_node_group" "node_groups" {
       #
       #   otherwise, take the first one list of objects from "node_groups_locations"
       #
-      subnet_ids = try(each.value["subnet_ids"], each.value["zones"] != null ? [
+      subnet_ids = try(lookup(each.value, "subnet_ids", null), each.value["zones"] != null ? [
         for zone in each.value["zones"] : lookup(
           { for item in local.node_groups_locations : item.zone => item.subnet_id },
           zone,
