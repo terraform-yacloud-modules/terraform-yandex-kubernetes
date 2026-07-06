@@ -131,6 +131,9 @@ module "kube" {
       node_labels = {
         node-type = "fixed"
       }
+      instance_labels = {
+        team = "platform"
+      }
     }
 
     "auto-scale-a" = {

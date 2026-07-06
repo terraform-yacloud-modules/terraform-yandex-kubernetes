@@ -19,6 +19,8 @@ resource "yandex_kubernetes_node_group" "node_groups" {
     # name is optional; if null, provider uses default: {instance_group.id}-{instance.short_id}
     name        = each.value["instance_name_template"]
     platform_id = each.value["platform_id"]
+    # Labels assigned to compute instances (VMs) created by the node group
+    labels = each.value["instance_labels"]
     metadata = merge(
       local.node_groups_ssh_keys_metadata,
       each.value["metadata"],
