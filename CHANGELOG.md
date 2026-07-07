@@ -1,3 +1,10 @@
+## v1.55.0 - 2026-07-07
+### Features
+- ebd4e15 feat: support labels on compute instances via instance_labels in node_groups
+
+### Miscellaneous
+- 4602834 Merge pull request [#119](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/119) from udjin10/feat/instance-template-labels
+
 ## v1.54.0 - 2026-05-27
 ### Bug Fixes
 - 178c665 fix: subnet_ids
