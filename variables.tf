@@ -282,6 +282,7 @@ variable "node_groups" {
   type = map(object({
     description               = optional(string, null)
     labels                    = optional(map(string), null)
+    instance_labels           = optional(map(string), null)
     version                   = optional(string, null)
     metadata                  = optional(map(string), {})
     platform_id               = optional(string, null)
