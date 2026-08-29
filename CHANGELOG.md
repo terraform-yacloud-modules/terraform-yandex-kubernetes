@@ -1,3 +1,7 @@
+## v1.57.0 - 2026-08-29
+### Miscellaneous
+- 1192b3f build(deps): bump actions/cache from 5.0.5 to 6.1.0 ([#118](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/118))
+
 ## v1.56.0 - 2026-08-29
 ### Miscellaneous
 - 090e37a build(deps): bump bridgecrewio/checkov-action from 12 to 12.3114.0 ([#121](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/121))
