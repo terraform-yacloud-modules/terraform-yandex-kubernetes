@@ -1,3 +1,7 @@
+## v1.56.0 - 2026-08-29
+### Miscellaneous
+- 090e37a build(deps): bump bridgecrewio/checkov-action from 12 to 12.3114.0 ([#121](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/121))
+
 ## v1.55.0 - 2026-07-07
 ### Features
 - ebd4e15 feat: support labels on compute instances via instance_labels in node_groups
