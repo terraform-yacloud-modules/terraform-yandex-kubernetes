@@ -52,7 +52,7 @@ jobs:
         with:
           soft_fail: true
       - name: Test code with Checkov
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v12.3114.0
         with:
           directory: /
           framework: terraform
