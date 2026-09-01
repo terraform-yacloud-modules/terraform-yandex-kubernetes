@@ -1,3 +1,7 @@
+## v1.60.0 - 2026-09-01
+### Miscellaneous
+- 24cb9d5 build(deps): bump actions/checkout from 6 to 7 ([#117](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/117))
+
 ## v1.59.0 - 2026-09-01
 ### Bug Fixes
 - 3176f36 fix: передача folder_id в примере с приоритетом tfvars над YC_FOLDER_ID
