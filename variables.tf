@@ -171,7 +171,7 @@ variable "workload_identity_federation" {
 variable "master_version" {
   description = "Version of K8S that will be used for master"
   type        = string
-  default     = "1.31"
+  default     = "1.33"
 }
 
 variable "master_public_ip" {

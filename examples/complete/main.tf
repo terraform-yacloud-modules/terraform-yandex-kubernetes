@@ -63,7 +63,7 @@ module "kube" {
   node_service_account_id = module.iam_accounts.id
 
   release_channel = "STABLE"
-  master_version  = "1.31"
+  master_version  = "1.33"
 
   master_public_ip    = true
   master_auto_upgrade = false
