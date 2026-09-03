@@ -1,3 +1,8 @@
+## v1.61.0 - 2026-09-03
+### Miscellaneous
+- a25cd89 Merge pull request [#122](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/122) from terraform-yacloud-modules/version-1-33
+- ea327f3 обновление версии K8S до 1.33
+
 ## v1.60.0 - 2026-09-01
 ### Miscellaneous
 - 24cb9d5 build(deps): bump actions/checkout from 6 to 7 ([#117](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/117))
