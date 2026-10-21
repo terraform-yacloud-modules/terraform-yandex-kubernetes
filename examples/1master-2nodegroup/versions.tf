@@ -2,7 +2,7 @@ terraform {
   required_providers {
     yandex = {
       source  = "yandex-cloud/yandex"
-      version = ">= 0.188.0"
+      version = ">= 0.189.0"
     }
     tls = {
       source  = "hashicorp/tls"
