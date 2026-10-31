@@ -1,10 +1,13 @@
 data "yandex_client_config" "client" {}
 
 provider "yandex" {
+  folder_id = var.folder_id
 }
 
 module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account?ref=v1.0.0"
+
+  folder_id = coalesce(var.folder_id, data.yandex_client_config.client.folder_id)
 
   name = "test-iam"
   folder_roles = [
@@ -34,9 +37,9 @@ module "network" {
     repo = "terraform-yacloud-modules/terraform-yandex-vpc"
   }
 
-  azs = ["ru-central1-a", "ru-central1-b", "ru-central1-d"]
+  azs = ["ru-central1-a", "ru-central1-d"]
 
-  private_subnets = [["10.10.0.0/24"], ["10.11.0.0/24"], ["10.12.0.0/24"]]
+  private_subnets = [["10.10.0.0/24"], ["10.12.0.0/24"]]
 
   create_vpc         = true
   create_nat_gateway = true
@@ -58,6 +61,11 @@ module "kube" {
       subnet_id = module.network.private_subnets_ids[0]
     }
   ]
+
+  master_logging = {
+    enabled          = false
+    create_log_group = false
+  }
 
   depends_on = [
     module.iam_accounts

@@ -1,6 +1,7 @@
 data "yandex_client_config" "client" {}
 
 provider "yandex" {
+  folder_id = var.folder_id
 }
 
 module "network" {
@@ -13,9 +14,9 @@ module "network" {
     repo = "terraform-yacloud-modules/terraform-yandex-vpc"
   }
 
-  azs = ["ru-central1-a", "ru-central1-b", "ru-central1-d"]
+  azs = ["ru-central1-a", "ru-central1-d"]
 
-  private_subnets = [["10.4.0.0/24"], ["10.5.0.0/24"], ["10.6.0.0/24"]]
+  private_subnets = [["10.4.0.0/24"], ["10.5.0.0/24"]]
 
   create_vpc         = true
   create_nat_gateway = true
@@ -23,6 +24,8 @@ module "network" {
 
 module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account?ref=v1.0.0"
+
+  folder_id = coalesce(var.folder_id, data.yandex_client_config.client.folder_id)
 
   name = "iam"
   folder_roles = [
@@ -80,14 +83,6 @@ module "kube" {
     {
       zone      = "ru-central1-a"
       subnet_id = module.network.private_subnets_ids[0]
-    },
-    {
-      zone      = "ru-central1-b"
-      subnet_id = module.network.private_subnets_ids[1]
-    },
-    {
-      zone      = "ru-central1-d"
-      subnet_id = module.network.private_subnets_ids[2]
     }
   ]
 
@@ -125,8 +120,8 @@ module "kube" {
       fixed_scale = {
         size = 1
       }
-      zones           = ["ru-central1-a", "ru-central1-b", "ru-central1-d"]
-      subnet_ids      = [module.network.private_subnets_ids[0], module.network.private_subnets_ids[1], module.network.private_subnets_ids[2]]
+      zones           = ["ru-central1-a", "ru-central1-d"]
+      subnet_ids      = [module.network.private_subnets_ids[0], module.network.private_subnets_ids[1]]
       auto_repair     = true
       auto_upgrade    = true
       max_expansion   = 1
@@ -164,7 +159,7 @@ module "kube" {
     }
 
     "auto-scale-b" = {
-      description    = "Auto scale node group in zone B"
+      description    = "Auto scale node group in zone D"
       nat            = true
       cores          = 2
       memory         = 8
@@ -177,7 +172,7 @@ module "kube" {
         max     = 5
         initial = 1
       }
-      zones        = ["ru-central1-b"]
+      zones        = ["ru-central1-d"]
       subnet_ids   = [module.network.private_subnets_ids[1]]
       auto_repair  = true
       auto_upgrade = true

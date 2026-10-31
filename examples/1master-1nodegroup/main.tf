@@ -1,6 +1,7 @@
 data "yandex_client_config" "client" {}
 
 provider "yandex" {
+  folder_id = var.folder_id
 }
 
 module "network" {
@@ -23,6 +24,8 @@ module "network" {
 
 module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account?ref=v1.0.0"
+
+  folder_id = coalesce(var.folder_id, data.yandex_client_config.client.folder_id)
 
   name = "iam"
   folder_roles = [
@@ -89,7 +92,7 @@ module "kube" {
 
   master_logging = {
     enabled                    = false
-    create_log_group           = true
+    create_log_group           = false
     log_group_retention_period = "168h"
     audit_enabled              = true
     kube_apiserver_enabled     = true
