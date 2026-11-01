@@ -1,3 +1,10 @@
+## v1.63.0 - 2026-11-01
+### Bug Fixes
+- 2f4fa7e fix(examples): исправление запуска примеров в Yandex Cloud
+
+### Miscellaneous
+- 31b26cc Merge pull request [#134](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/134) from terraform-yacloud-modules/fix/examples-required-folder-id
+
 ## v1.62.0 - 2026-10-31
 ### Miscellaneous
 - 66bea72 build(deps): bump bridgecrewio/checkov-action ([#133](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/133))
