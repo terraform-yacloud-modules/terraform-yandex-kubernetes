@@ -1,10 +1,13 @@
 data "yandex_client_config" "client" {}
 
 provider "yandex" {
+  folder_id = var.folder_id
 }
 
 module "iam_accounts" {
   source = "git::https://github.com/terraform-yacloud-modules/terraform-yandex-iam.git//modules/iam-account?ref=v1.0.0"
+
+  folder_id = coalesce(var.folder_id, data.yandex_client_config.client.folder_id)
 
   name = "iam"
   folder_roles = [
@@ -60,11 +63,17 @@ module "kube" {
     }
   ]
 
+  master_logging = {
+    enabled          = false
+    create_log_group = false
+  }
+
   node_groups = {
     "fixed-scale" = {
       instance_name_template = "node-{instance.short_id}"
       subnet_ids             = [module.network.private_subnets_ids[0]]
-      nat                    = true
+      nat                    = false
+      preemptible            = true
       cores                  = 2
       memory                 = 4
       fixed_scale = {
@@ -77,7 +86,8 @@ module "kube" {
     "auto-scale" = {
       instance_name_template = "node-{instance.index}"
       subnet_ids             = [module.network.private_subnets_ids[0]]
-      nat                    = true
+      nat                    = false
+      preemptible            = true
       cores                  = 2
       memory                 = 8
       auto_scale = {
