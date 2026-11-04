@@ -1,3 +1,7 @@
+## v1.64.0 - 2026-11-04
+### Miscellaneous
+- 8e78ef8 build(deps): bump bridgecrewio/checkov-action ([#135](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/135))
+
 ## v1.63.0 - 2026-11-01
 ### Bug Fixes
 - 2f4fa7e fix(examples): исправление запуска примеров в Yandex Cloud
