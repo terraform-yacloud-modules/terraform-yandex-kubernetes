@@ -74,7 +74,7 @@ module "kube" {
   cni_type = "calico"
 
   workload_identity_federation = {
-    enabled = false
+    enabled = true
   }
 
   master_region = "ru-central1"
@@ -156,6 +156,8 @@ module "kube" {
         node-type = "auto"
         zone      = "a"
       }
+      # Opt this group out of the cluster-level Workload Identity Federation
+      workload_identity_federation = false
     }
 
     "auto-scale-b" = {
