@@ -61,6 +61,10 @@ jobs:
           download_external_modules: false
   semver:
     name: "Set code version tag"
+    # Release tags are only created on push to main. The job must not run on
+    # pull requests: for a PR from a fork the head branch does not exist in this
+    # repository (checkout fails), and GITHUB_TOKEN is read-only there anyway.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -72,13 +76,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v7
-        if: github.event_name == 'pull_request'
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Check out code
-        uses: actions/checkout@v7
-        if: github.event_name == 'push'
         with:
           fetch-depth: 0
       - name: Set application version
