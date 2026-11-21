@@ -57,10 +57,49 @@ variable "cluster_ipv4_range" {
 
 }
 
+variable "cluster_ipv4_ranges" {
+  description = <<-EOF
+  List of CIDR blocks for allocating pod IPv4 addresses. Cannot be set together
+  with `cluster_ipv4_range`. Updates are append-only: keep the existing CIDRs
+  and append new ones at the end. At most 8 CIDRs are allowed.
+  EOF
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = var.cluster_ipv4_ranges == null ? true : (
+      length(var.cluster_ipv4_ranges) > 0 &&
+      length(var.cluster_ipv4_ranges) <= 8 &&
+      alltrue([for cidr in var.cluster_ipv4_ranges : can(cidrhost(cidr, 0))]) &&
+      var.cluster_ipv4_range == null
+    )
+    error_message = "cluster_ipv4_ranges must contain from 1 to 8 valid CIDR blocks and cannot be combined with cluster_ipv4_range"
+  }
+}
+
 variable "cluster_ipv6_range" {
   description = "Identical to cluster_ipv4_range but for IPv6 protocol"
   type        = string
   default     = null
+}
+
+variable "cluster_ipv6_ranges" {
+  description = <<-EOF
+  Identical to `cluster_ipv4_ranges` but for IPv6 protocol. Cannot be set
+  together with `cluster_ipv6_range`.
+  EOF
+  type        = list(string)
+  default     = null
+
+  validation {
+    condition = var.cluster_ipv6_ranges == null ? true : (
+      length(var.cluster_ipv6_ranges) > 0 &&
+      length(var.cluster_ipv6_ranges) <= 8 &&
+      alltrue([for cidr in var.cluster_ipv6_ranges : can(cidrhost(cidr, 0))]) &&
+      var.cluster_ipv6_range == null
+    )
+    error_message = "cluster_ipv6_ranges must contain from 1 to 8 valid CIDR blocks and cannot be combined with cluster_ipv6_range"
+  }
 }
 
 variable "node_ipv4_cidr_mask_size" {
@@ -129,6 +168,32 @@ variable "node_service_account_id" {
   EOF
   type        = string
   default     = null
+}
+
+variable "cluster_iam_members" {
+  description = <<-EOF
+  Map of cluster IAM roles to the lists of members that will be granted on the
+  K8S cluster. Members use Yandex Cloud IAM format: `userAccount:<id>`,
+  `serviceAccount:<id>`, `group:<id>` or `federatedUser:<id>`.
+
+  The module owns the full member list for every role listed here: members
+  granted to the same role outside the module are removed on apply.
+  Roles that are not listed are left untouched.
+
+  E.g:
+  ```
+  cluster_iam_members = {
+    "k8s.cluster-api.viewer" = ["serviceAccount:<service-account-id>"]
+  }
+  ```
+  EOF
+  type        = map(set(string))
+  default     = {}
+
+  validation {
+    condition     = alltrue([for role, members in var.cluster_iam_members : length(members) > 0])
+    error_message = "Every role in cluster_iam_members must have at least one member"
+  }
 }
 
 #
