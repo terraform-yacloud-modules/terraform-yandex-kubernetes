@@ -183,4 +183,14 @@ resource "yandex_kubernetes_node_group" "node_groups" {
       max_unavailable = each.value["max_unavailable"]
     }
   }
+
+  # Falls back to the cluster-level flag; the cluster must have WIF enabled
+  # for a node group to use it
+  dynamic "workload_identity_federation" {
+    for_each = coalesce(each.value["workload_identity_federation"], var.workload_identity_federation["enabled"]) ? [1] : []
+
+    content {
+      enabled = true
+    }
+  }
 }

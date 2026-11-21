@@ -68,6 +68,10 @@ module "kube" {
     create_log_group = false
   }
 
+  workload_identity_federation = {
+    enabled = true
+  }
+
   node_groups = {
     "fixed-scale" = {
       instance_name_template = "node-{instance.short_id}"
@@ -90,6 +94,8 @@ module "kube" {
       preemptible            = true
       cores                  = 2
       memory                 = 8
+      # Opt this group out of the cluster-level Workload Identity Federation
+      workload_identity_federation = false
       auto_scale = {
         min     = 1
         max     = 5
