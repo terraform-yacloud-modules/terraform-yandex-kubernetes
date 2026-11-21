@@ -1,3 +1,7 @@
+## v1.69.0 - 2026-11-21
+### Features
+- 3f91095 feat: support workload_identity_federation on node groups ([#136](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/136))
+
 ## v1.68.0 - 2026-11-20
 ### Miscellaneous
 - 25a5fa3 ci: pin bridgecrewio/checkov-action to major tag v12 ([#140](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/pull/140))
