@@ -1,30 +1,157 @@
-# Yandex Cloud Kubernetes Terraform module
+# Kubernetes в Yandex Cloud: Terraform-модуль
 
-Terraform module which creates Yandex Cloud Kubernetes resources.
+Terraform-модуль создаёт управляемый кластер Kubernetes в Yandex Cloud:
+master, группы узлов и сопутствующие ресурсы.
 
-## Examples
+## Что умеет модуль
 
-Examples codified under
-the [`examples`](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/tree/main/examples) are intended
-to give users references for how to use the module(s) as well as testing/validating changes to the source code of the
-module. If contributing to the project, please be sure to make any appropriate updates to the relevant examples to allow
-maintainers to test your changes and to keep the examples up to date for users. Thank you!
+- Зональный (`master_locations` из одного элемента) и региональный
+  (несколько `master_locations` и `master_region`) master.
+- Выбор версии Kubernetes, канала релизов, публичного IP и групп безопасности
+  для master.
+- Политики обслуживания и окна обслуживания для master и групп узлов.
+- Логирование master в Yandex Cloud Logging: существующая группа логов,
+  группа по умолчанию каталога или автоматически создаваемая группа.
+- CNI Calico или Cilium.
+- Шифрование секретов в KMS.
+- Workload Identity Federation на уровне кластера и с переопределением для
+  каждой группы узлов.
+- Группы узлов с фиксированным или автоматическим масштабированием,
+  предварительно создаваемыми (`preemptible`) и обычными ВМ, GPU, дисками
+  нужного типа и размера, метками, taint'ами, DNS-записями, политикой
+  размещения и шаблоном имени ВМ.
+- **Несколько диапазонов pod-адресов** — параметры `cluster_ipv4_ranges` и
+  `cluster_ipv6_ranges`.
+- **Управление доступом к API кластера по IAM** — параметр
+  `cluster_iam_members`.
+
+## Несколько диапазонов pod-адресов
+
+Параметр `cluster_ipv4_ranges` позволяет задать до восьми CIDR-блоков для
+pod-адресов. Это нужно, когда одного диапазона перестаёт хватать: диапазоны
+можно расширять, не пересоздавая кластер.
+
+```hcl
+module "kube" {
+  source = "terraform-yacloud-modules/kubernetes/yandex"
+
+  # ...
+
+  release_channel     = "RAPID"
+  master_version      = "1.35"
+  cluster_ipv4_ranges = ["10.112.0.0/16", "10.114.0.0/16"]
+
+  # Одновременно с cluster_ipv4_ranges нельзя использовать cluster_ipv4_range:
+  # cluster_ipv4_range  = "10.112.0.0/16"
+  # cluster_ipv4_ranges = null
+}
+```
+
+Важно:
+
+- `cluster_ipv4_ranges` и `cluster_ipv4_range` взаимоисключающие, то же
+  правило действует для `cluster_ipv6_ranges` и `cluster_ipv6_range`;
+- обновление списка идёт только добавлением: существующие диапазоны нужно
+  сохранять на своих местах и добавлять новые в конец;
+- диапазоны не должны пересекаться с подсетями сети кластера и с
+  `service_ipv4_range`;
+- в списке может быть от 1 до 8 CIDR-блоков;
+- несколько диапазонов Yandex Cloud принимает пока только на канале
+  `RAPID` (проверено на Kubernetes 1.35). На каналах `STABLE` и `REGULAR`
+  API отвечает ошибкой `multiple cluster CIDR blocks is not supported`.
+  Одиночный диапазон в списке работает на любом канале;
+- старые параметры `cluster_ipv4_range` и `cluster_ipv6_range` не удалены:
+  модуль переводит их в список из одного элемента, поэтому обновление
+  существующих кластеров не требует изменений в конфигурации.
+
+Диапазоны поддерживаются провайдером `yandex-cloud/yandex` начиная с версии
+`0.234.0` — модуль требует её в `versions.tf`.
+
+## Доступ к API кластера по IAM
+
+Параметр `cluster_iam_members` выдаёт роли на кластер указанным субъектам.
+Ключ — роль, значение — набор участников в формате IAM Yandex Cloud:
+`userAccount:<id>`, `serviceAccount:<id>`, `group:<id>`,
+`federatedUser:<id>`.
+
+```hcl
+resource "yandex_iam_service_account" "viewer" {
+  folder_id = var.folder_id
+  name      = "k8s-viewer"
+}
+
+module "kube" {
+  source = "terraform-yacloud-modules/kubernetes/yandex"
+
+  # ...
+
+  cluster_iam_members = {
+    "k8s.cluster-api.viewer" = [
+      "serviceAccount:${yandex_iam_service_account.viewer.id}",
+    ]
+  }
+}
+```
+
+Для каждой роли создаётся отдельный ресурс
+`yandex_kubernetes_cluster_iam_binding`, поэтому модуль управляет полным
+набором участников для перечисленных ролей: участники, выданные этой роли
+вне модуля, будут удалены при следующем `apply`. Не перечисленные в
+`cluster_iam_members` роли модуль не трогает. Проверить результат можно
+командой:
+
+```bash
+yc managed-kubernetes cluster list-access-bindings --name <имя-кластера>
+```
+
+## Примеры
+
+Каталог [`examples`](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/tree/main/examples)
+содержит готовые конфигурации. Они же используются для проверки изменений
+модуля.
+
+| Пример | Что показывает |
+| --- | --- |
+| [`simple`](examples/simple) | Минимальный кластер без групп узлов |
+| [`1master-1nodegroup`](examples/1master-1nodegroup) | Один master и одна группа узлов |
+| [`1master-1nodegroup-enable-logging`](examples/1master-1nodegroup-enable-logging) | Логирование master в группу логов каталога |
+| [`1master-2nodegroup`](examples/1master-2nodegroup) | Две группы узлов: фиксированная и автомасштабируемая, Workload Identity Federation |
+| [`complete`](examples/complete) | Все возможности модуля: несколько диапазонов pod-адресов, IAM-доступ, автомасштабирование, зоны `ru-central1-a` и `ru-central1-d` |
+
+Запуск любого примера:
+
+```bash
+cd examples/complete
+
+export YC_TOKEN="$(yc iam create-token)"
+export YC_CLOUD_ID="$(yc config get cloud-id)"
+
+terraform init
+terraform apply -var folder_id=<id-каталога>
+terraform destroy -var folder_id=<id-каталога>
+```
+
+## Требования
+
+Модуль требует Terraform `>= 1.3`, провайдер `yandex-cloud/yandex` версии
+`>= 0.234.0` и провайдер `hashicorp/tls` версии `>= 3.1.0`. Полные таблицы
+входных параметров и выходных значений приведены ниже.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 3.1.0 |
-| <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | >= 0.189.0 |
+| <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | >= 0.234.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | >= 3.1.0 |
-| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | >= 0.189.0 |
+| <a name="provider_yandex"></a> [yandex](#provider\_yandex) | >= 0.234.0 |
 
 ## Modules
 
@@ -33,9 +160,10 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [tls_private_key.default_ssh_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [yandex_kubernetes_cluster.main](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_cluster) | resource |
+| [yandex_kubernetes_cluster_iam_binding.bindings](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_cluster_iam_binding) | resource |
 | [yandex_kubernetes_node_group.node_groups](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_node_group) | resource |
 | [yandex_logging_group.main](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/logging_group) | resource |
 | [yandex_client_config.client](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/data-sources/client_config) | data source |
@@ -43,9 +171,12 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_cluster_iam_members"></a> [cluster\_iam\_members](#input\_cluster\_iam\_members) | Map of cluster IAM roles to the lists of members that will be granted on the<br/>K8S cluster. Members use Yandex Cloud IAM format: `userAccount:<id>`,<br/>`serviceAccount:<id>`, `group:<id>` or `federatedUser:<id>`.<br/><br/>The module owns the full member list for every role listed here: members<br/>granted to the same role outside the module are removed on apply.<br/>Roles that are not listed are left untouched.<br/><br/>E.g:<pre>cluster_iam_members = {<br/>  "k8s.cluster-api.viewer" = ["serviceAccount:<service-account-id>"]<br/>}</pre> | `map(set(string))` | `{}` | no |
 | <a name="input_cluster_ipv4_range"></a> [cluster\_ipv4\_range](#input\_cluster\_ipv4\_range) | CIDR block. IP range for allocating pod addresses. It should not overlap with<br/>any subnet in the network the K8S cluster located in. Static routes will<br/>be set up for this CIDR blocks in node subnets | `string` | `null` | no |
+| <a name="input_cluster_ipv4_ranges"></a> [cluster\_ipv4\_ranges](#input\_cluster\_ipv4\_ranges) | List of CIDR blocks for allocating pod IPv4 addresses. Cannot be set together<br/>with `cluster_ipv4_range`. Updates are append-only: keep the existing CIDRs<br/>and append new ones at the end. At most 8 CIDRs are allowed. | `list(string)` | `null` | no |
 | <a name="input_cluster_ipv6_range"></a> [cluster\_ipv6\_range](#input\_cluster\_ipv6\_range) | Identical to cluster\_ipv4\_range but for IPv6 protocol | `string` | `null` | no |
+| <a name="input_cluster_ipv6_ranges"></a> [cluster\_ipv6\_ranges](#input\_cluster\_ipv6\_ranges) | Identical to `cluster_ipv4_ranges` but for IPv6 protocol. Cannot be set<br/>together with `cluster_ipv6_range`. | `list(string)` | `null` | no |
 | <a name="input_cni_type"></a> [cni\_type](#input\_cni\_type) | Type of K8S CNI which will be used for the cluster | `string` | `"calico"` | no |
 | <a name="input_description"></a> [description](#input\_description) | K8S cluster description | `string` | `""` | no |
 | <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enable OS Login for node groups | `bool` | `false` | no |
@@ -80,7 +211,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cluster_ca_certificate"></a> [cluster\_ca\_certificate](#output\_cluster\_ca\_certificate) | PEM-encoded public certificate that is the root of trust for the K8S cluster |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of a new K8S cluster |
 | <a name="output_default_ssh_key_prv"></a> [default\_ssh\_key\_prv](#output\_default\_ssh\_key\_prv) | Default node groups that is attached to all node groups |
@@ -93,7 +224,6 @@ No modules.
 | <a name="output_node_groups"></a> [node\_groups](#output\_node\_groups) | Attributes of yandex\_node\_group resources created in cluster |
 <!-- END_TF_DOCS -->
 
-## License
+## Лицензия
 
-Apache-2.0 Licensed.
-See [LICENSE](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/blob/main/LICENSE).
+Apache-2.0. Подробности в [LICENSE](https://github.com/terraform-yacloud-modules/terraform-yandex-kubernetes/blob/main/LICENSE).

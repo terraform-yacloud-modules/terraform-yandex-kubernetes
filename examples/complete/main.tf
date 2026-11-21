@@ -45,6 +45,14 @@ module "iam_accounts" {
 
 }
 
+# Read-only service account that gets access to the Kubernetes API of the cluster
+resource "yandex_iam_service_account" "viewer" {
+  folder_id = coalesce(var.folder_id, data.yandex_client_config.client.folder_id)
+
+  name        = "k8s-viewer"
+  description = "Read-only access to the Kubernetes cluster API"
+}
+
 module "kube" {
   source = "../../"
 
@@ -58,15 +66,24 @@ module "kube" {
     type        = "complete"
   }
 
-  cluster_ipv4_range       = "10.112.0.0/16"
+  cluster_ipv4_ranges      = ["10.112.0.0/16", "10.114.0.0/16"]
   service_ipv4_range       = "10.113.0.0/16"
   node_ipv4_cidr_mask_size = 24
 
   service_account_id      = module.iam_accounts.id
   node_service_account_id = module.iam_accounts.id
 
-  release_channel = "STABLE"
-  master_version  = "1.33"
+  # Grant read-only access to the Kubernetes API to a dedicated service account
+  cluster_iam_members = {
+    "k8s.cluster-api.viewer" = [
+      "serviceAccount:${yandex_iam_service_account.viewer.id}",
+    ]
+  }
+
+  release_channel = "RAPID"
+  # Multiple pod CIDR ranges are currently accepted only on the RAPID channel
+  # and require Kubernetes 1.34 or newer
+  master_version = "1.35"
 
   master_public_ip    = true
   master_auto_upgrade = false

@@ -15,9 +15,15 @@ resource "yandex_kubernetes_cluster" "main" {
   description = var.description
   labels      = var.labels
 
-  network_id               = var.network_id
-  cluster_ipv4_range       = var.cluster_ipv4_range
-  cluster_ipv6_range       = var.cluster_ipv6_range
+  network_id = var.network_id
+  # The provider deprecated the single-range arguments; the module keeps the
+  # old variables and translates them to the list form.
+  cluster_ipv4_ranges = var.cluster_ipv4_ranges != null ? var.cluster_ipv4_ranges : (
+    var.cluster_ipv4_range != null ? [var.cluster_ipv4_range] : null
+  )
+  cluster_ipv6_ranges = var.cluster_ipv6_ranges != null ? var.cluster_ipv6_ranges : (
+    var.cluster_ipv6_range != null ? [var.cluster_ipv6_range] : null
+  )
   node_ipv4_cidr_mask_size = var.node_ipv4_cidr_mask_size
   service_ipv4_range       = var.service_ipv4_range
   service_ipv6_range       = var.service_ipv6_range
